@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { CreateGameDto } from './dto/create-game.dto';
@@ -19,7 +20,9 @@ export class GamesController {
   constructor(private readonly gamesService: GamesService) {}
 
   @Post()
-  async create(@Body() createGameDto: CreateGameDto): Promise<Game> {
+  async create(
+    @Body(ValidationPipe) createGameDto: CreateGameDto,
+  ): Promise<Game> {
     return this.gamesService.create(createGameDto);
   }
 
@@ -36,7 +39,7 @@ export class GamesController {
   @Patch(':id')
   async update(
     @Param('id', ValidateObjectIdPipe) id: string,
-    @Body() updateGameDto: UpdateGameDto,
+    @Body(ValidationPipe) updateGameDto: UpdateGameDto,
   ): Promise<Game> {
     return this.gamesService.update(id, updateGameDto);
   }

@@ -13,13 +13,13 @@ export enum Genre {
 export class Game {
   @Prop({ required: true, unique: true })
   title: string;
-  @Prop({ required: true })
+  @Prop()
   description: string;
   @Prop({ required: true })
   price: number;
   @Prop({ required: true })
   genre: Genre;
-  @Prop({ required: true })
+  @Prop()
   releaseDate: Date;
 }
 
