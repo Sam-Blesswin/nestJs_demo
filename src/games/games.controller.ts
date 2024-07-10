@@ -12,6 +12,7 @@ import { GamesService } from './games.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { Game } from './schemas/game.schema';
+import { ValidateObjectIdPipe } from 'src/pipes/validateObjectId.pipe';
 
 @Controller('games')
 export class GamesController {
@@ -28,20 +29,20 @@ export class GamesController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Game> {
+  async findOne(@Param('id', ValidateObjectIdPipe) id: string): Promise<Game> {
     return this.gamesService.findOne(id);
   }
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ValidateObjectIdPipe) id: string,
     @Body() updateGameDto: UpdateGameDto,
   ): Promise<Game> {
     return this.gamesService.update(id, updateGameDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<Game> {
+  async remove(@Param('id', ValidateObjectIdPipe) id: string): Promise<Game> {
     return this.gamesService.remove(id);
   }
 }
