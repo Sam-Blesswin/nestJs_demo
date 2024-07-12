@@ -10,13 +10,13 @@ import { UsePipes, ValidationPipe } from '@nestjs/common';
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Query(() => [User], { name: 'users' })
-  findAll(): Promise<User[]> {
+  @Query(() => [User])
+  users(): Promise<User[]> {
     return this.userService.findAll();
   }
 
-  @Query(() => User, { name: 'user' })
-  findOne(
+  @Query(() => User)
+  user(
     @Args('id', { type: () => String }, ValidateObjectIdPipe) id: string,
   ): Promise<User | null> {
     return this.userService.findOne(id);
@@ -33,13 +33,10 @@ export class UserResolver {
   @Mutation(() => User)
   @UsePipes(ValidationPipe)
   updateUser(
+    @Args('id', { type: () => String }, ValidateObjectIdPipe) id: string,
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
   ): Promise<User | null> {
-    // Manually apply the validation pipe
-    const validateObjectIdPipe = new ValidateObjectIdPipe();
-    validateObjectIdPipe.transform(updateUserInput.id);
-
-    return this.userService.update(updateUserInput.id, updateUserInput);
+    return this.userService.update(id, updateUserInput);
   }
 
   @Mutation(() => User)
