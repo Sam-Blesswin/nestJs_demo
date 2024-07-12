@@ -1,8 +1,10 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { ValidateObjectIdPipe } from 'src/pipes/validateObjectId.pipe';
+import { ArgumentMetadata } from '@nestjs/common';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -15,7 +17,7 @@ export class UserResolver {
 
   @Query(() => User, { name: 'user' })
   findOne(
-    @Args('id', { type: () => String }) id: string,
+    @Args('id', { type: () => String }, ValidateObjectIdPipe) id: string,
   ): Promise<User | null> {
     return this.userService.findOne(id);
   }
@@ -31,12 +33,16 @@ export class UserResolver {
   updateUser(
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
   ): Promise<User | null> {
+    // Manually apply the validation pipe
+    const validateObjectIdPipe = new ValidateObjectIdPipe();
+    validateObjectIdPipe.transform(updateUserInput.id);
+
     return this.userService.update(updateUserInput.id, updateUserInput);
   }
 
   @Mutation(() => User)
   removeUser(
-    @Args('id', { type: () => Int }) id: number,
+    @Args('id', { type: () => String }, ValidateObjectIdPipe) id: string,
   ): Promise<User | null> {
     return this.userService.remove(id);
   }
