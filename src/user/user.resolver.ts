@@ -4,7 +4,7 @@ import { User } from './schemas/user.schema';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { ValidateObjectIdPipe } from 'src/pipes/validateObjectId.pipe';
-import { ArgumentMetadata } from '@nestjs/common';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -23,6 +23,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UsePipes(ValidationPipe)
   createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
   ): Promise<User> {
@@ -30,6 +31,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UsePipes(ValidationPipe)
   updateUser(
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
   ): Promise<User | null> {
